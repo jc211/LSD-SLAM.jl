@@ -8,6 +8,19 @@ abstract type AbstractFrame end;
 end
 
 @with_kw struct FrameData
+
+ #            +-----------+
+ #            | Level   4 |
+ #         +--+-----------+--+
+ #         |    Level   3    |
+ #      +--+-----------------+--+
+ #      |       Level   2       |
+ #   +--+-----------------------+--+
+ #   |          Level   1          |
+ #   +-----------------------------+
+ #
+ # Datastructure to hold image pyramids, gradient pyramids and depth pyramids
+ #
     timestamp::Float64 = -1
     𝙄::PyramidOfNothingOr{Matrix{Gray{Normed{UInt8,8}}}} = [nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇x::PyramidOfNothingOr{Matrix{Float64}} = [nothing for i=1:NUM_PYRAMID_LEVELS]
@@ -66,9 +79,6 @@ end
 
 
 _getframedata(f::AbstractFrame)::FrameData = f._data
-
-
-
 
 function _require(f::AbstractFrame, flag::FrameDataFlag; level::Integer=1)
     if flag == IMAGE
@@ -226,3 +236,4 @@ function _build_depth!(f::AbstractFrame; level::Integer=1)
     
 end
 
+function _build_depth!()
