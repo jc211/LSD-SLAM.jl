@@ -25,7 +25,7 @@ end
     w::PyramidOf{Int64}
     h::PyramidOf{Int64}
     K::PyramidOf{CameraIntrinsics}
-    𝙄::PyramidOfNothingOr{Matrix{Gray{Normed{UInt8,8}}}} = NothingOr{Matrix{Gray{Normed{UInt8,8}}}}[nothing for i=1:NUM_PYRAMID_LEVELS]
+    𝙄::PyramidOfNothingOr{Matrix{Pixel}} = NothingOr{Matrix{Pixel}}[nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇x::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇y::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇max::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]

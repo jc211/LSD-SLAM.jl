@@ -1,6 +1,7 @@
 @testset "TUM" begin
-    K = LSDSLAM.CameraIntrinsics([517.3 0 318.6; 0 516.5 244.3; 0 0 1])
-    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K)
+    K = [517.3 0 318.6; 0 516.5 244.3; 0 0 1]
+    d = [0.2624, -0.9531, -0.0054, 0.0026, 1.1633];
+    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K, d)
     frame = LSDSLAM.read!(factory, 1)
     @test isa(factory, LSDSLAM.TUMFrameFactory)
     @test isa(frame, LSDSLAM.TUMFrame)
@@ -11,8 +12,9 @@ end
 
 
 @testset "TUMFrame" begin
-    K = LSDSLAM.CameraIntrinsics([517.3 0 318.6; 0 516.5 244.3; 0 0 1])
-    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K)
+    K = [517.3 0 318.6; 0 516.5 244.3; 0 0 1]
+    d = [0.2624, -0.9531, -0.0054, 0.0026, 1.1633];
+    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K, d)
     frame = LSDSLAM.read!(factory, 1)
 
     @test LSDSLAM.width(frame, level=1) == 640
@@ -23,7 +25,6 @@ end
     @test LSDSLAM.height(frame, level=2) == 240
     @test LSDSLAM.height(frame, level=3) == 120
 
-    @test LSDSLAM.K(frame, level=1)() ≈ K()
 
     for i = 1:LSDSLAM.NUM_PYRAMID_LEVELS
         @test LSDSLAM.𝙄!(frame, level=i) != nothing

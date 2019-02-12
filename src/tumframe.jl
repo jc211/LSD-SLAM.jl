@@ -9,11 +9,20 @@ mutable struct TUMFrame <: AbstractFrame
     _id::Int64
     _header::TUMFrameHeader
     _data::FrameData
+    _undistorter::AbstractUndistorter
 end
 
-function TUMFrame(;id::Integer, header::TUMFrameHeader, width::Integer, height::Integer, cameraintrinsics::CameraIntrinsics)
+function TUMFrame(;
+    id::Integer,
+    header::TUMFrameHeader,
+    width::Integer,
+    height::Integer,
+    cameraintrinsics::CameraIntrinsics,
+    undistorter::AbstractUndistorter
+    )
+
     framedata = FrameData(width, height, cameraintrinsics)
-    TUMFrame(id, header, framedata)
+    TUMFrame(id, header, framedata, undistorter)
 end
 
 function loaddepth!(f::TUMFrame)
@@ -28,5 +37,5 @@ end
 function _require_base_image!(f::TUMFrame)
     d = _getframedata(f)
     image = load("$(f._header.imagepath)")
-    d.𝙄[1] = Gray.(image)
+    d.𝙄[1] = f._undistorter(Gray.(image))
 end

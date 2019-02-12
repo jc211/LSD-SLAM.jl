@@ -11,13 +11,15 @@ module LSDSLAM
     using UUIDs: UUID, uuid1
     using LinearAlgebra
     using Rotations
-    using Test
+    using ImageDistortion
 
     include("constants.jl")
     include("types.jl")
     include("camera.jl")
+    include("distortion.jl")
     include("framefactory.jl")
     include("frame.jl")
     include("tumframe.jl")
+    include("se3tracker.jl")
 
 end
