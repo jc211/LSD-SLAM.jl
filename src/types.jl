@@ -1,3 +1,3 @@
 const NothingOr{T} = Union{T, Nothing} where T
-const PyramidOf{T} = Array{<:T} where T
-const PyramidOfNothingOr{T} = Array{<:NothingOr{T}} where T
+const PyramidOf{T} = Vector{<:T} where T
+const PyramidOfNothingOr{T} = Vector{<:NothingOr{T}} where T

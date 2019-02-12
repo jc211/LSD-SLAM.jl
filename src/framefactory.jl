@@ -1,11 +1,14 @@
-abstract type DataSource end
+abstract type FrameFactory end
 
-mutable struct TUMFileSource <: DataSource
+mutable struct TUMFrameFactory <: FrameFactory
     directory::String
     _counter::Int32
     _df::DataFrame
+    _width::Int64
+    _height::Int64
+    _cameraintrinsics::CameraIntrinsics
     
-    function TUMFileSource(directory::String)
+    function TUMFrameFactory(directory::String, width::Integer, height::Integer, cameraintrinsics::CameraIntrinsics)
         x = new()
         x.directory = directory
         
@@ -18,7 +21,12 @@ mutable struct TUMFileSource <: DataSource
         for (i, row) in enumerate(eachrow(dcolor))
             t = dcolor.timestamp[i]
             dt_i = searchsortedfirst(ddepth.timestamp[1:end], t) # search for first timestamp that is greater or equal to t
-            dt = ddepth.timestamp[dt_i]
+            if dt_i < size(ddepth.timestamp)[1]
+                dt = ddepth.timestamp[dt_i]
+            else
+                dt = 0
+            end
+            
 
             # check the timestamp directly previous to this one in case it is closer
             if dt_i != 1 
@@ -33,6 +41,9 @@ mutable struct TUMFileSource <: DataSource
             depth_path =  "$directory/$(ddepth.url[dt_i])"
             push!(df, [dcolor.timestamp[i], color_path, ddepth.timestamp[dt_i], depth_path])
         end
+        x._width = width
+        x._height = height
+        x._cameraintrinsics = cameraintrinsics
         x._df = df
         x._counter = 1
         return x
@@ -40,20 +51,22 @@ mutable struct TUMFileSource <: DataSource
 end
 
 
-function read!(source::TUMFileSource, ind = Nothing)
+function read!(source::TUMFrameFactory, ind = Nothing)
     if ind == Nothing
         ind = source._counter
         source._counter += 1
     end
-    
     dataset = source._df
-    color_fname = dataset[ind, :color_file]
-    depth_fname = dataset[ind, :depth_file]
-    color_img = load("$color_fname")
-    depth_img = Gray.(load("$depth_fname"))
-    depth_img = rawview(real.(depth_img))/5000
-    timestamp = dataset[ind, :color_time] - dataset[1, :color_time]
-    depth_timestamp = dataset[ind, :depth_time] - dataset[1, :depth_time]
-    
-    return timestamp, color_img, depth_timestamp, depth_img
+    imagepath = dataset[ind, :color_file]
+    depthpath = dataset[ind, :depth_file]
+    imagetimestamp = dataset[ind, :color_time] - dataset[1, :color_time]
+    depthtimestamp = dataset[ind, :depth_time] - dataset[1, :depth_time]
+
+    header = TUMFrameHeader(imagetimestamp, imagepath, depthtimestamp, depthpath)
+    return TUMFrame(
+        id=ind, 
+        header=header, 
+        width=source._width, 
+        height=source._height,
+        cameraintrinsics= source._cameraintrinsics )
 end
