@@ -70,8 +70,8 @@ function read!(source::TUMFrameFactory, ind = Nothing)
     dataset = source._df
     imagepath = dataset[ind, :color_file]
     depthpath = dataset[ind, :depth_file]
-    imagetimestamp = dataset[ind, :color_time] - dataset[1, :color_time]
-    depthtimestamp = dataset[ind, :depth_time] - dataset[1, :depth_time]
+    imagetimestamp = dataset[ind, :color_time]
+    depthtimestamp = dataset[ind, :depth_time]
 
     header = TUMFrameHeader(imagetimestamp, imagepath, depthtimestamp, depthpath)
     return TUMFrame(

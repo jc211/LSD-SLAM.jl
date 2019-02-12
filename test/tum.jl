@@ -1,7 +1,7 @@
 @testset "TUM" begin
     K = [517.3 0 318.6; 0 516.5 244.3; 0 0 1]
     d = [0.2624, -0.9531, -0.0054, 0.0026, 1.1633];
-    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K, d)
+    factory = LSDSLAM.TUMFrameFactory(DATASET_DIR, 640, 480, K, d)
     frame = LSDSLAM.read!(factory, 1)
     @test isa(factory, LSDSLAM.TUMFrameFactory)
     @test isa(frame, LSDSLAM.TUMFrame)
@@ -14,7 +14,7 @@ end
 @testset "TUMFrame" begin
     K = [517.3 0 318.6; 0 516.5 244.3; 0 0 1]
     d = [0.2624, -0.9531, -0.0054, 0.0026, 1.1633];
-    factory = LSDSLAM.TUMFrameFactory("test//tumtestset", 640, 480, K, d)
+    factory = LSDSLAM.TUMFrameFactory(DATASET_DIR, 640, 480, K, d)
     frame = LSDSLAM.read!(factory, 1)
 
     @test LSDSLAM.width(frame, level=1) == 640

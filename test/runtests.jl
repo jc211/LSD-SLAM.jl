@@ -1,11 +1,16 @@
 using Test
 using Images
-include("../src/lsdslam.jl")
+using CSV
+using DataFrames
+using CoordinateTransformations
+using Rotations
 
-@testset "LSD-SLAM" begin
-    include("undistorter.jl")
-    include("camera.jl")
-    include("frame.jl")
-    include("tum.jl")
-    include("se3tracker.jl")
-end
+
+include("../src/lsdslam.jl")
+include("constants.jl")
+
+include("undistorter.jl")
+include("camera.jl")
+include("frame.jl")
+include("tum.jl")
+include("se3tracker.jl")
