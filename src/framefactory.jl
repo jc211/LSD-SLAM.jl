@@ -6,7 +6,7 @@ mutable struct TUMFrameFactory <: FrameFactory
     _df::DataFrame
     _width::Int64
     _height::Int64
-    _cameraintrinsics::CameraIntrinsics
+    _camera::Camera
     _undistorter::AbstractUndistorter
 
     function TUMFrameFactory(
@@ -53,7 +53,7 @@ mutable struct TUMFrameFactory <: FrameFactory
         x._undistorter = SimplePinholeUndistorter(cameraintrinsics,distcoeffs)
         x._width = width
         x._height = height
-        x._cameraintrinsics = CameraIntrinsics(x._undistorter._cameraintrinsics)
+        x._camera = Camera(x._undistorter._cameraintrinsics)
         x._df = df
         x._counter = 1
         x._undistorter
@@ -79,6 +79,6 @@ function read!(source::TUMFrameFactory, ind = Nothing)
         header=header,
         width=source._width,
         height=source._height,
-        cameraintrinsics= source._cameraintrinsics,
+        camera= source._camera,
         undistorter=source._undistorter )
 end

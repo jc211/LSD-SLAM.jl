@@ -5,12 +5,13 @@ const SE3TRACKING_MAX_LEVEL = 5
 const SE3TRACKING_MIN_LEVEL = 3
 
 const CAMERAPIXELNOISE2 = 4*4
-const IDEPTHVARWEIGHT = 1
+const σ²_CAMERA = 4*4
+const σ²_WEIGHT = 1
 
 const HUBER_THRESHOLD = 3
 
-const λ_SUCCESS = 0.5
-const λ_FAIL = 2.0
+const λ_SUCCESS = 0.5 # <1
+const λ_FAIL = 2.0 # >1
 const λ_INITIAL = 0.0
 
 const MAX_ITERATIONS = [5, 20, 50, 100, 100]

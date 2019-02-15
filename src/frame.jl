@@ -7,6 +7,7 @@ abstract type AbstractFrame end;
     DEPTH = 3
 end
 
+
 @with_kw struct FrameData
 
     #            +-----------+
@@ -24,7 +25,7 @@ end
 
     w::PyramidOf{Int64}
     h::PyramidOf{Int64}
-    K::PyramidOf{CameraIntrinsics}
+    K::PyramidOf{Camera}
     𝙄::PyramidOfNothingOr{Matrix{Pixel}} = NothingOr{Matrix{Pixel}}[nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇x::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]
     ∇y::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]
@@ -33,10 +34,10 @@ end
     σ²::PyramidOfNothingOr{Matrix{Float64}} = NothingOr{Matrix{Float64}}[nothing for i=1:NUM_PYRAMID_LEVELS]
 end
 
-function FrameData(width::Integer, height::Integer, cameraintrinsics::CameraIntrinsics)
+function FrameData(width::Integer, height::Integer, camera::Camera)
     width =  Int64[width÷(1<<i) for i=0:NUM_PYRAMID_LEVELS-1]
     height =  Int64[height÷(1<<i) for i=0:NUM_PYRAMID_LEVELS-1]
-    k =  CameraIntrinsics[scale(cameraintrinsics, 1/(1<<i)) for i=0:NUM_PYRAMID_LEVELS-1]
+    k =  Camera[scale(camera, 1/(1<<i)) for i=0:NUM_PYRAMID_LEVELS-1]
     return FrameData(w=width, h= height, K=k)
 end
 
@@ -50,7 +51,7 @@ function height(f::AbstractFrame; level::Integer = 1)
     d.h[level]
 end
 
-function K(f::AbstractFrame; level::Integer = 1)
+function camera(f::AbstractFrame; level::Integer = 1)
     d = _getframedata(f)
     d.K[level]
 end
@@ -147,7 +148,7 @@ function _require_depth!(f::AbstractFrame; level::Integer=1)
     end
     # Start Nodes
     if level == 1
-        return _require_depth!(f)
+        return _require_base_depth!(f)
     end
     _require_depth!(f, level=level-1)
     _build_depth!(f, level=level)
@@ -159,7 +160,7 @@ function _require_base_image!(f::AbstractFrame)
 end
 
 function _require_base_depth!(f::AbstractFrame)
-    throw("Loading depth from disk is not supported")
+    throw("Depth data is missing. Loading depth from disk is not supported")
 end
 
 function _build_image!(f::AbstractFrame; level::Integer=1)

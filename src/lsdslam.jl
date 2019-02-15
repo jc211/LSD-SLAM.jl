@@ -16,10 +16,14 @@ module LSDSLAM
     include("constants.jl")
     include("types.jl")
     include("camera.jl")
+    include("SE3.jl")
     include("distortion.jl")
     include("framefactory.jl")
     include("frame.jl")
     include("tumframe.jl")
+    include("affineestimator.jl")
+    include("LGS6.jl")
     include("se3tracker.jl")
 
+    #include("debuggers/se3tracker.jl")
 end
